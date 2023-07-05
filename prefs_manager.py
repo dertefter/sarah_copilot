@@ -1,4 +1,6 @@
 import json
+import ctypes
+import windialog as wd
 
 def get(name):
     with open('prefs.json') as f:
@@ -14,3 +16,5 @@ def write(name, value):
         data[name] = value
         with open('prefs.json', 'w') as f:
             json.dump(data, f)
+def open_folder_dialog():
+    return wd.getdir()

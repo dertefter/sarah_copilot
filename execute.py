@@ -1,3 +1,5 @@
 
 def answer():
-    return "Hello World"
+    import os
+    os.system("start cmd")
+    return "Я открыла командную строку"

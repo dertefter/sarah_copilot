@@ -162,5 +162,26 @@ WindowManager:
                         on_press: app.update_stt(self.active)
 
 
+                MDCard:
+                    md_bg_color: "#272429"
+                    orientation: "horizontal"
+                    adaptive_height: True
+
+                    padding: [self.height/4, 0]
+                    radius: [self.height/2, self.height/2, self.height/2, self.height/2]
+
+                    MDTextField:
+                        id: path_to_vosk_model
+                        hint_text: "Путь к модели Vosk"
+                        theme_text_color: "Custom"
+                        text_color: "#e6e1e6"
+                        font_style: "Body1"
+
+                    MDIconButton:
+                        icon: "folder"
+                        pos_hint: {'center_x': .5, 'center_y': .5}
+                        on_release: app.set_model()
+
+
 
 

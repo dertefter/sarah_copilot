@@ -83,7 +83,22 @@ class MainApp(MDApp):
             prefs_manager.write('voice_recognition', False)
         if (prefs_manager.get('voice_synthesis') == None):
             prefs_manager.write('voice_synthesis', False)
-
+        if prefs_manager.get('path_to_vosk_model') != None:
+            is_valid = stt.check_model(prefs_manager.get('path_to_vosk_model'))
+            if is_valid:
+                self.root.get_screen('settings').ids.voice_recognition.disabled = False
+            else:
+                self.root.get_screen('settings').ids.voice_recognition.disabled = True
+                self.root.get_screen('settings').ids.voice_recognition.active = False
+                self.root.get_screen('settings').ids.path_to_vosk_model.text = ""
+                prefs_manager.write('path_to_vosk_model', None)
+                prefs_manager.write('voice_recognition', False)
+        else:
+            self.root.get_screen('settings').ids.voice_recognition.disabled = True
+            self.root.get_screen('settings').ids.voice_recognition.active = False
+            self.root.get_screen('settings').ids.path_to_vosk_model.text = ""
+            prefs_manager.write('path_to_vosk_model', None)
+            prefs_manager.write('voice_recognition', False)
         if prefs_manager.get('voice_recognition') == True:
             self.root.get_screen('settings').ids.voice_recognition.active = True
             self.root.get_screen('chat').ids.listen_notification.opacity = 1
@@ -97,6 +112,9 @@ class MainApp(MDApp):
             self.root.get_screen('settings').ids.voice_synthesis.active = True
         else:
             self.root.get_screen('settings').ids.voice_synthesis.active = False
+
+        if prefs_manager.get('path_to_vosk_model') is not None:
+            self.root.get_screen('settings').ids.path_to_vosk_model.text = prefs_manager.get('path_to_vosk_model')
         self.root.get_screen('settings').ids.provider_button.text = prefs_manager.get('provider')
 
     @mainthread
@@ -211,5 +229,36 @@ class MainApp(MDApp):
         )
         self.menu.open()
 
+    def set_model(self):
+        path = prefs_manager.open_folder_dialog()
+        if path is not None and len(path) == 1:
+            path = path[0]
+            print(path)
+            if stt.check_model(path):
+                prefs_manager.write('path_to_vosk_model', path)
+                self.root.get_screen('settings').ids.path_to_vosk_model.text = path
+                snack = MDSnackbar()
+                snack.duration = 3
+                snack.md_bg_color = "#6cfe9d"
+                self.root.get_screen('settings').ids.voice_recognition.disabled = False
+                snack.add_widget(
+                    MDLabel(text="Модель инициализирована!", halign="left", theme_text_color="Custom",
+                            text_color="#00210c"))
+
+                snack.open()
+            else:
+                prefs_manager.write('path_to_vosk_model', None)
+                self.root.get_screen('settings').ids.voice_recognition.disabled = True
+                self.root.get_screen('settings').ids.voice_recognition.active = False
+                self.root.get_screen('settings').ids.path_to_vosk_model.text = ""
+                prefs_manager.write('path_to_vosk_model', None)
+                prefs_manager.write('voice_recognition', False)
+                self.stt_service(False)
+                snack = MDSnackbar()
+                snack.duration = 3
+                snack.md_bg_color="#93000a"
+                snack.add_widget(MDLabel(text="Ошибка инициализации модели...", halign="left", theme_text_color="Custom", text_color="#ffdad6"))
+
+                snack.open()
 if __name__ == '__main__':
     MainApp().run()
