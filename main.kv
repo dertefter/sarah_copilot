@@ -1,0 +1,166 @@
+WindowManager:
+    ChatScreen:
+    SettingsScreen:
+
+<ChatScreen>:
+    name: 'chat'
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: "#1d1b1e"
+        MDTopAppBar:
+            id: toolbar
+            md_bg_color: "#1d1b1e"
+            elevation: 0
+            type_height: "small"
+            specific_text_color: "#e6e1e6"
+            title: "Sarah - Copilot for Windows 11"
+            right_action_items: [["history", lambda x: app.clear_history()], ["cog", lambda x: app.toolbar_callback()]]
+        MDBoxLayout:
+            padding: "12dp"
+            adaptive_height: True
+            id: listen_notification
+            md_bg_color: "#633b48"
+            orientation: "horizontal"
+
+            MDLabel:
+                adaptive_height: True
+                text: "Сервис распознавания речи запущен"
+                theme_text_color: "Custom"
+                text_color: "#ffd9e3"
+                font_style: "Subtitle1"
+            MDIcon:
+                icon: "microphone"
+                theme_text_color: "Custom"
+                text_color: "#ffd9e3"
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDScrollView:
+            id: scrollview
+            size_hint_y: 10
+
+            MDBoxLayout:
+                id: chat
+                orientation: 'vertical'
+                adaptive_height: True
+                spacing: '10dp'
+                padding: '10dp'
+                Image:
+                    id: typing_animation
+                    opacity: 0
+                    pos: (self.parent.width / -2.45, self.pos[1])
+                    size_hint_y: None
+                    size: [50, 50]
+                    source: "assets/images/typing_dark.gif"
+                    anim_loop: 0
+                    anim_delay: 0.001
+
+        MDBoxLayout:
+            md_bg_color: "#272429"
+            padding: 10
+            adaptive_height: True
+            MDTextField:
+                id: field
+                pos_hint: {'center_x':0.5, 'center_y':0.5}
+                hint_text: 'Сообщение...'
+                multiline: False
+                on_text_validate: app.send_callback()
+
+            MDIconButton:
+                id: send
+                pos_hint: {'center_x':0.5, 'center_y':0.5}
+                icon: 'send'
+                on_release: app.send_callback()
+
+
+
+<SettingsScreen>:
+    name: 'settings'
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: "#1d1b1e"
+        MDTopAppBar:
+            id: toolbar
+            md_bg_color: "#1d1b1e"
+            elevation: 0
+            type_height: "small"
+            specific_text_color: "#e6e1e6"
+            title: "Настройки"
+            left_action_items: [["arrow-left", lambda x: app.toolbar_callback()]]
+        MDScrollView:
+            id: scrollview
+            size_hint_y: 10
+
+            MDBoxLayout:
+                spacing: 20
+                id: settings_list
+                orientation: 'vertical'
+                adaptive_height: True
+                padding: '10dp'
+                MDCard:
+                    md_bg_color: "#272429"
+                    orientation: "horizontal"
+                    adaptive_height: True
+                    spacing: '10dp'
+                    padding: '12dp'
+                    radius: [self.height/2, self.height/2, self.height/2, self.height/2]
+
+                    MDLabel:
+                        text: "Провайдер"
+                        theme_text_color: "Custom"
+                        text_color: "#e6e1e6"
+                        font_style: "Body1"
+                    MDFillRoundFlatButton:
+                        id: provider_button
+                        padding: '10dp'
+                        text: "MDRaisedButton"
+                        md_bg_color: "#cfbcff"
+                        theme_text_color: "Custom"
+                        text_color: "#381e72"
+                        font_style: "Body1"
+                        on_release: app.set_provider_menu()
+                MDCard:
+                    md_bg_color: "#272429"
+                    orientation: "horizontal"
+                    adaptive_height: True
+                    padding: [self.height/4, 0]
+                    radius: [self.height/2, self.height/2, self.height/2, self.height/2]
+
+                    MDLabel:
+                        text: "Озвучивать результат"
+                        theme_text_color: "Custom"
+                        text_color: "#e6e1e6"
+                        font_style: "Body1"
+
+                    MDCheckbox:
+                        id: voice_synthesis
+                        size_hint: None, None
+                        size: "48dp", "48dp"
+                        pos_hint: {'center_x': .5, 'center_y': .5}
+                        color_active: "#cfbcff"
+                        on_press: app.update_tts(self.active)
+
+                MDCard:
+                    md_bg_color: "#272429"
+                    orientation: "horizontal"
+                    adaptive_height: True
+
+                    padding: [self.height/4, 0]
+                    radius: [self.height/2, self.height/2, self.height/2, self.height/2]
+
+                    MDLabel:
+                        text: "Распознавание речи после фразы активации"
+                        theme_text_color: "Custom"
+                        text_color: "#e6e1e6"
+                        font_style: "Body1"
+
+                    MDCheckbox:
+                        id: voice_recognition
+                        size_hint: None, None
+                        size: "48dp", "48dp"
+                        color_active: "#cfbcff"
+                        pos_hint: {'center_x': .5, 'center_y': .5}
+                        on_press: app.update_stt(self.active)
+
+
+
+
