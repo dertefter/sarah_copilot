@@ -26,6 +26,16 @@ pip install -r requirements.txt
 ```
 python main.py
 ```
+
+## Скриншоты
+<div style="height: 50%">
+
+![screenshot](assets/screenshots/1.png)
+![screenshot](assets/screenshots/2.png)
+![screenshot](assets/screenshots/3.png)
+
+</div>
+
 ## Важно
 > Данный проект создан в ознакомительных целях. Автор не несёт ответственности за ваши действия. Используйте его на свой страх и риск.
 
@@ -35,4 +45,4 @@ python main.py
 * [vosk](https://alphacephei.com/vosk/)
 
 ## Лизцензия
-Distributed under MIT License
+Распространяется под лицензией [MIT](LICENSE.md)
