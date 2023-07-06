@@ -42,7 +42,8 @@ class WindowManager(ScreenManager):
 
 
 class MainApp(MDApp):
-
+    icon = 'assets/other/icon.ico'
+    title = 'Sarah - Copilot for Windows'
     monitor_info = GetMonitorInfo(MonitorFromPoint((0, 0)))
     work_area = monitor_info.get("Work")
     Window.top = work_area[3] - Window.height
