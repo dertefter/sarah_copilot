@@ -1,4 +1,5 @@
 # Sarah - Copilot для Windows 11
+[![English](https://img.shields.io/badge/en%20-%20lang?label=lang&color=098)](README.ENG.md)
 
 Попытка создания своего Copilot для Windows. Проект основан на [gpt4free](https://github.com/xtekky/gpt4free).
 
