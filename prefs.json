@@ -1,1 +1,1 @@
-{"provider": "GetGpt", "voice_recognition": true, "voice_synthesis": false, "path_to_vosk_model": "D:\\small_ru"}
+{"provider": "DeepAi", "voice_recognition": true, "voice_synthesis": true, "path_to_vosk_model": "D:\\small_ru"}

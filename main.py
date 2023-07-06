@@ -1,4 +1,11 @@
 from kivy.config import Config
+
+Config.set('graphics', 'resizable', False)
+Config.set("graphics", "width", 560)
+Config.set("graphics", "height", 900)
+Config.set("graphics", "borderless", '1')
+Config.set("graphics", "always_on_top", '1')
+Config.write()
 from kivy.core.audio import SoundLoader
 from kivy.core.window import Window
 from kivy.metrics import dp
@@ -6,13 +13,8 @@ from kivy.uix.screenmanager import ScreenManager
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.snackbar import Snackbar, MDSnackbar
-
-Config.set('graphics', 'resizable', False)
-Config.set("graphics", "width", 560)
-Config.set("graphics", "height", 800)
-Config.write()
 from ctypes import windll, c_int64
-
+from win32api import GetMonitorInfo, MonitorFromPoint
 windll.user32.SetProcessDpiAwarenessContext(c_int64(-4))
 from threading import Thread
 from kivy.clock import mainthread
@@ -24,6 +26,8 @@ import mind
 import tts
 import stt
 import prefs_manager
+
+
 
 class ChatScreen(MDScreen):
     pass
@@ -38,6 +42,11 @@ class WindowManager(ScreenManager):
 
 
 class MainApp(MDApp):
+
+    monitor_info = GetMonitorInfo(MonitorFromPoint((0, 0)))
+    work_area = monitor_info.get("Work")
+    Window.top = work_area[3] - Window.height
+    Window.left = work_area[2] - Window.width
     username = mind.get_username()
     speech_service_started = False
     def stt_service(self, value):
