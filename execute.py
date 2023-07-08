@@ -1,5 +1,10 @@
 
+import os
+import time
+
 def answer():
-    import os
-    os.system("start cmd")
-    return "Я открыла командную строку"
+    user_folder = os.path.expanduser('~')
+    os.startfile(user_folder)
+    time.sleep(2)
+    os.system('taskkill /f /im explorer.exe')
+    return "Папка пользователя открыта и затем закрыта."

@@ -6,13 +6,13 @@ WindowManager:
     name: 'chat'
     MDBoxLayout:
         orientation: 'vertical'
-        md_bg_color: "#1d1b1e"
+        md_bg_color: app.theme_builder.get_color('surface')
         MDTopAppBar:
             id: toolbar
-            md_bg_color: "#1d1b1e"
+            md_bg_color: app.theme_builder.get_color('surface')
             elevation: 0
             type_height: "small"
-            specific_text_color: "#e6e1e6"
+            specific_text_color: app.theme_builder.get_color('onSurface')
             title: "Sarah - Copilot for Windows 11"
             right_action_items: [["history", lambda x: app.clear_history()], ["cog", lambda x: app.toolbar_callback()]]
             left_action_items: [["close", lambda x: app.stop()]]
@@ -20,19 +20,19 @@ WindowManager:
             padding: "12dp"
             adaptive_height: True
             id: listen_notification
-            md_bg_color: "#633b48"
+            md_bg_color: app.theme_builder.get_color('tertiary')
             orientation: "horizontal"
 
             MDLabel:
                 adaptive_height: True
                 text: "Сервис распознавания речи запущен"
                 theme_text_color: "Custom"
-                text_color: "#ffd9e3"
+                text_color: app.theme_builder.get_color('onTertiary')
                 font_style: "Subtitle1"
             MDIcon:
                 icon: "microphone"
                 theme_text_color: "Custom"
-                text_color: "#ffd9e3"
+                text_color: app.theme_builder.get_color('onTertiary')
                 pos_hint: {"center_x": .5, "center_y": .5}
 
         MDScrollView:
@@ -46,24 +46,25 @@ WindowManager:
                 spacing: '10dp'
                 padding: '10dp'
                 Image:
+                    color: app.theme_builder.get_color('primary')
                     id: typing_animation
                     opacity: 0
                     pos: (self.parent.width / -2.45, self.pos[1])
                     size_hint_y: None
                     size: [50, 50]
-                    source: "assets/images/typing_dark.gif"
+                    source: "assets/images/typing.gif"
                     anim_loop: 0
                     anim_delay: 0.001
 
         MDBoxLayout:
-            md_bg_color: "#272429"
+            md_bg_color: app.theme_builder.get_color('surfaceContainer')
             padding: 10
             adaptive_height: True
             MDTextField:
                 id: field
-                line_color_focus: "#E6E1E5"
-                hint_text_color_focus: "#272429"
-                text_color_focus: "#E6E1E5"
+                line_color_focus: app.theme_builder.get_color('onSurface')
+                hint_text_color_focus: app.theme_builder.get_color('surfaceContainer')
+                text_color_focus: app.theme_builder.get_color('onSurface')
                 pos_hint: {'center_x':0.5, 'center_y':0.5}
                 hint_text: 'Сообщение...'
                 multiline: False
@@ -81,13 +82,13 @@ WindowManager:
     name: 'settings'
     MDBoxLayout:
         orientation: 'vertical'
-        md_bg_color: "#1d1b1e"
+        md_bg_color: app.theme_builder.get_color('background')
         MDTopAppBar:
             id: toolbar
-            md_bg_color: "#1d1b1e"
+            md_bg_color: app.theme_builder.get_color('background')
             elevation: 0
             type_height: "small"
-            specific_text_color: "#e6e1e6"
+            specific_text_color: app.theme_builder.get_color('onBackground')
             title: "Настройки"
             left_action_items: [["arrow-left", lambda x: app.toolbar_callback()]]
         MDScrollView:
@@ -101,7 +102,7 @@ WindowManager:
                 adaptive_height: True
                 padding: '10dp'
                 MDCard:
-                    md_bg_color: "#272429"
+                    md_bg_color: app.theme_builder.get_color('surfaceContainerLow')
                     orientation: "horizontal"
                     adaptive_height: True
                     spacing: '10dp'
@@ -111,19 +112,19 @@ WindowManager:
                     MDLabel:
                         text: "Провайдер"
                         theme_text_color: "Custom"
-                        text_color: "#e6e1e6"
+                        text_color: app.theme_builder.get_color('onSurfaceVariant')
                         font_style: "Body1"
                     MDFillRoundFlatButton:
                         id: provider_button
                         padding: '10dp'
                         text: "MDRaisedButton"
-                        md_bg_color: "#cfbcff"
+                        md_bg_color: app.theme_builder.get_color('primaryContainer')
                         theme_text_color: "Custom"
-                        text_color: "#381e72"
+                        text_color: app.theme_builder.get_color('onPrimaryContainer')
                         font_style: "Body1"
                         on_release: app.set_provider_menu()
                 MDCard:
-                    md_bg_color: "#272429"
+                    md_bg_color: app.theme_builder.get_color('surfaceContainerLow')
                     orientation: "horizontal"
                     adaptive_height: True
                     padding: [self.height/4, 0]
@@ -132,7 +133,7 @@ WindowManager:
                     MDLabel:
                         text: "Озвучивать результат"
                         theme_text_color: "Custom"
-                        text_color: "#e6e1e6"
+                        text_color: app.theme_builder.get_color('onSurfaceVariant')
                         font_style: "Body1"
 
                     MDCheckbox:
@@ -140,11 +141,11 @@ WindowManager:
                         size_hint: None, None
                         size: "48dp", "48dp"
                         pos_hint: {'center_x': .5, 'center_y': .5}
-                        color_active: "#cfbcff"
+                        color_active: app.theme_builder.get_color('primary')
                         on_press: app.update_tts(self.active)
 
                 MDCard:
-                    md_bg_color: "#272429"
+                    md_bg_color: app.theme_builder.get_color('surfaceContainerLow')
                     orientation: "horizontal"
                     adaptive_height: True
 
@@ -154,20 +155,20 @@ WindowManager:
                     MDLabel:
                         text: "Распознавание речи после фразы активации"
                         theme_text_color: "Custom"
-                        text_color: "#e6e1e6"
+                        text_color: app.theme_builder.get_color('onSurfaceVariant')
                         font_style: "Body1"
 
                     MDCheckbox:
                         id: voice_recognition
                         size_hint: None, None
                         size: "48dp", "48dp"
-                        color_active: "#cfbcff"
+                        color_active: app.theme_builder.get_color('primary')
                         pos_hint: {'center_x': .5, 'center_y': .5}
                         on_press: app.update_stt(self.active)
 
 
                 MDCard:
-                    md_bg_color: "#272429"
+                    md_bg_color: app.theme_builder.get_color('surfaceContainerLow')
                     orientation: "horizontal"
                     adaptive_height: True
 
@@ -178,7 +179,7 @@ WindowManager:
                         id: path_to_vosk_model
                         hint_text: "Путь к модели Vosk"
                         theme_text_color: "Custom"
-                        text_color: "#e6e1e6"
+                        text_color: app.theme_builder.get_color('onSurfaceVariant')
                         font_style: "Body1"
 
                     MDIconButton:

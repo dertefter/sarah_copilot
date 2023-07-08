@@ -26,7 +26,7 @@ import mind
 import tts
 import stt
 import prefs_manager
-
+import ThemeBuilder
 
 
 class ChatScreen(MDScreen):
@@ -42,6 +42,11 @@ class WindowManager(ScreenManager):
 
 
 class MainApp(MDApp):
+    theme_builder = ThemeBuilder.ThemeBuilder()
+    theme_style = theme_builder.get_theme_style()
+    print(theme_builder.get_color('surface'))
+
+
     icon = 'assets/other/icon.ico'
     title = 'Sarah - Copilot for Windows'
     monitor_info = GetMonitorInfo(MonitorFromPoint((0, 0)))
@@ -50,6 +55,7 @@ class MainApp(MDApp):
     Window.left = work_area[2] - Window.width
     username = mind.get_username()
     speech_service_started = False
+
     def stt_service(self, value):
         if not self.speech_service_started:
             if value:
@@ -70,15 +76,12 @@ class MainApp(MDApp):
 
     def on_start(self):
         self.init_prefs()
-
-
-
-
+        self.get_ai_response('init')
     def build(self):
         self.theme_cls.primary_palette = "DeepPurple"
         self.theme_cls.primary_hue = "200"
         self.theme_cls.material_style = "M3"
-        self.theme_cls.theme_style = "Dark"
+        self.theme_cls.theme_style = self.theme_style
 
         return Builder.load_file('main.kv')
 
@@ -145,9 +148,9 @@ class MainApp(MDApp):
             error = True
         if error:
             message_label.text = text
-            item.md_bg_color = "#93000a"
-            sender_label.text_color = "#ffdad6"
-            message_label.text_color = "#ffdad6"
+            item.md_bg_color = self.theme_builder.get_color('error')
+            sender_label.text_color = self.theme_builder.get_color('onError')
+            message_label.text_color = self.theme_builder.get_color('onError')
             item.remove_widget(sender_label)
             self.root.get_screen('chat').ids.chat.add_widget(item, 1)
             self.root.get_screen('chat').ids.scrollview.scroll_to(item)
@@ -155,18 +158,18 @@ class MainApp(MDApp):
             return
 
         if sender == self.username:
-            item.md_bg_color = "#272429"
-            sender_label.text_color = "#cbc4cf"
-            message_label.text_color = "#cbc4cf"
+            item.md_bg_color = self.theme_builder.get_color('secondaryContainer')
+            sender_label.text_color = self.theme_builder.get_color('onSecondaryContainer')
+            message_label.text_color = self.theme_builder.get_color('onSecondaryContainer')
         else:
             if prefs_manager.get('voice_synthesis') == True:
                 tts_thread = Thread(target=tts.say, args=[text])
                 tts_thread.daemon = True
                 tts_thread.start()
             self.is_typing(False)
-            item.md_bg_color = "#4f378a"
-            sender_label.text_color = "#ebddff"
-            message_label.text_color = "#ebddff"
+            item.md_bg_color = self.theme_builder.get_color('primaryContainer')
+            sender_label.text_color = self.theme_builder.get_color('onPrimaryContainer')
+            message_label.text_color = self.theme_builder.get_color('onPrimaryContainer')
 
         self.root.get_screen('chat').ids.chat.add_widget(item, 1)
         self.root.get_screen('chat').ids.scrollview.scroll_to(item)
@@ -235,7 +238,7 @@ class MainApp(MDApp):
             caller=self.root.get_screen('settings').ids.provider_button.parent,
             items=menu_items,
             width_mult=4,
-            md_bg_color="#49454e"
+            md_bg_color=self.theme_builder.get_color('surface')
         )
         self.menu.open()
 
