@@ -47,7 +47,7 @@ class MainApp(MDApp):
     print(theme_builder.get_color('surface'))
 
 
-    icon = 'assets/other/icon.ico'
+    icon = 'assets/other/icon.png'
     title = 'Sarah - Copilot for Windows'
     monitor_info = GetMonitorInfo(MonitorFromPoint((0, 0)))
     work_area = monitor_info.get("Work")
@@ -55,6 +55,13 @@ class MainApp(MDApp):
     Window.left = work_area[2] - Window.width
     username = mind.get_username()
     speech_service_started = False
+
+    def minimize(self):
+        Window.minimize()
+
+    def un_minimize(self):
+        Window.restore()
+
 
     def stt_service(self, value):
         if not self.speech_service_started:
@@ -88,7 +95,7 @@ class MainApp(MDApp):
     def clear_history(self):
         for i in range(1, len(self.root.get_screen('chat').ids.chat.children)):
             self.root.get_screen('chat').ids.chat.remove_widget(self.root.get_screen('chat').ids.chat.children[1])
-            mind.clear_history()
+        mind.new_chat(self)
     def init_prefs(self):
         if (prefs_manager.get('provider') == None):
             prefs_manager.write('provider', mind.get_providers()[0])

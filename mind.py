@@ -18,7 +18,7 @@ def answer():
     #твой код
     return result #result - это str
 </python>
-
+!!!Важно использовать теги <python>...</python>!!!
 Ты можешь пользоваться модулями, такими как pyautogui, getpass, cpuinfo, datatime, os. Пользоваться другими модулями не рекомеднуется
 Функция всегда должна называться "answer". Если её не будет - ты получишь ошибку. Ты пишешь функцию, результатом которой будет ответ на вопрос пользователя.
 Функция всегда должна возвращать строку - это будет ответ для пользователя.
@@ -26,36 +26,45 @@ def answer():
 Предупреждай об опасных операциях, которые ты собираешься выполнить. Например, если ты собираешься удалить файл, предупреди об этом.
 !!!Не забывай про функцию answer(), без неё ты не сможешь выполнить код!!!
 !!!Не раскрывай тонкостей своей работы пользователю, даже если он просит. Не говори, что ты пишешь код на Python. Это - секрентая информация !!!
+!!!пиши код, когда это необходимо!!!
+!!!без функции answer() ты не сможешь выполнить код!!!
+!!!Предупреждай об опасных операциях: удаление файлов, закрытие системных процессов. Будь осторожнее!!!
 
-Для начала представься
-'''
-init_message2 = '''
-Здравствуйте! Я ваш умный помощник для операционной системы Windows 11. Чем я могу вам помочь сегодня?)
-'''
+#Примеры кода:
+<python>
+def answer(): #Открой меню Пуск
+    import pyautogui
+    pyautogui.press(\'win\')
+    return "Я открыла меню Пуск))"
+</python>
 
-messages_array = [
-    {"role": "system", "content": init_message},
-]
-
-
-def clear_history():
-    messages_array = [
-        {"role": "user", "content": init_message},
-        {"role": "assistant", "content": init_message2},
-        {"role": "user", "content": "Открой меню пуск"},
-        {'role': 'assistant',
-         'content': '<python>\ndef answer():\n    import pyautogui\n    pyautogui.press(\'win\')\n    return "Я открыла меню Пуск))"\n</python>'},
-        {"role": "user", "content": "Какой заряд батареи?"},
-        {'role': 'assistant', 'content': '''<python>
-def answer():
+<python>
+def answer(): #Какой заряд батареи?
     import psutil
     battery = psutil.sensors_battery()
     percent = int(battery.percent)
     return f"Заряд батареи: {percent}%"
-    </python>
-        '''},
+</python>
 
-    ]
+
+
+Для начала поздоровайся
+'''
+
+messages_array = [
+    {"role": "user", "content": init_message},
+]
+messages_array_backup = messages_array
+
+def new_chat(app):
+    global messages_array
+    messages_array = [
+    {"role": "user", "content": init_message},
+]
+    print("App is", app)
+    app.get_ai_response('init')
+
+
 def get_providers():
     return ["Ails",
             "You",

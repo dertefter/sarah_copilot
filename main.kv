@@ -15,7 +15,7 @@ WindowManager:
             specific_text_color: app.theme_builder.get_color('onSurface')
             title: "Sarah - Copilot for Windows 11"
             right_action_items: [["history", lambda x: app.clear_history()], ["cog", lambda x: app.toolbar_callback()]]
-            left_action_items: [["close", lambda x: app.stop()]]
+            left_action_items: [["window-close", lambda x: app.stop()], ["window-minimize", lambda x: app.minimize()]]
         MDBoxLayout:
             padding: "12dp"
             adaptive_height: True
