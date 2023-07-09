@@ -1,5 +1,5 @@
 # Sarah - Copilot для Windows 11
-[![English](https://img.shields.io/badge/en%20-%20lang?label=lang&color=098)](README.ENG.md)
+[![English](https://img.shields.io/badge/english%20-%20language?label=language&color=098)](README.ENG.md)
 
 ![ChatGPT](https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai) ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffffff) ![Windows 11](https://img.shields.io/badge/Windows%2011-%230079d5.svg?style=for-the-badge&logo=Windows%2011&logoColor=white)
 
