@@ -42,7 +42,7 @@ class ThemeBuilder():
     def generateMaterialYou(self, image):
         try:
             argbs = getDominantColors(image, quality=10, default_chunk=128)
-            print("argbs = ", argbs)
+
             argb = argbs[0]
             color = themeFromSourceColor(argb)
             dark = color['schemes']['dark'].props
@@ -57,10 +57,8 @@ class ThemeBuilder():
 
     def get_theme_style(self):
         if darkdetect.isDark():
-            print("Dark")
             return "Dark"
         else:
-            print("Light")
             return "Light"
     def get_theme(self):
         if darkdetect.isDark():

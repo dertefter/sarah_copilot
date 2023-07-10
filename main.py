@@ -1,3 +1,6 @@
+import os
+os.environ["KIVY_NO_CONSOLELOG"] = "1"
+
 from kivy.config import Config
 
 Config.set('graphics', 'resizable', False)
@@ -95,7 +98,9 @@ class MainApp(MDApp):
     def clear_history(self):
         for i in range(1, len(self.root.get_screen('chat').ids.chat.children)):
             self.root.get_screen('chat').ids.chat.remove_widget(self.root.get_screen('chat').ids.chat.children[1])
-        mind.new_chat(self)
+        t = Thread(target=mind.new_chat, args=[self])
+        t.daemon = True
+        t.start()
     def init_prefs(self):
         if (prefs_manager.get('provider') == None):
             prefs_manager.write('provider', mind.get_providers()[0])

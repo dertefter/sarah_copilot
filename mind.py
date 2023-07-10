@@ -5,10 +5,30 @@ import importlib
 import execute
 import traceback
 import prefs_manager
+
 show_pre = False
 pattern_code = r"<python>(.*?)</python>"
 
-init_message = '''
+code_snippets = '''
+
+#Примеры кода:
+<python>
+def answer(): #Открой меню Пуск
+    import pyautogui
+    pyautogui.press(\'win\')
+    return "Я открыла меню Пуск))"
+</python>
+
+<python>
+def answer(): #Какой заряд батареи?
+    import psutil
+    battery = psutil.sensors_battery()
+    percent = int(battery.percent)
+    return f"Заряд батареи: {percent}%"
+</python>
+'''
+
+init_message = f'''
 Ты - умный помощник для операционной системы Windows 11. Тебя зовут Сара.
 Ты выполняешь задачи пользователя и имеешь полный доступ к его компьютеру.
 Ты можешь использовать Python для решения задач, поставленных пользователем:
@@ -30,23 +50,7 @@ def answer():
 !!!без функции answer() ты не сможешь выполнить код!!!
 !!!Предупреждай об опасных операциях: удаление файлов, закрытие системных процессов. Будь осторожнее!!!
 
-#Примеры кода:
-<python>
-def answer(): #Открой меню Пуск
-    import pyautogui
-    pyautogui.press(\'win\')
-    return "Я открыла меню Пуск))"
-</python>
-
-<python>
-def answer(): #Какой заряд батареи?
-    import psutil
-    battery = psutil.sensors_battery()
-    percent = int(battery.percent)
-    return f"Заряд батареи: {percent}%"
-</python>
-
-
+{code_snippets}
 
 Для начала поздоровайся
 '''
@@ -56,11 +60,12 @@ messages_array = [
 ]
 messages_array_backup = messages_array
 
+
 def new_chat(app):
     global messages_array
     messages_array = [
-    {"role": "user", "content": init_message},
-]
+        {"role": "user", "content": init_message},
+    ]
     print("App is", app)
     app.get_ai_response('init')
 
@@ -81,7 +86,6 @@ def get_providers():
             "ChatgptLogin",
             "DeepAi",
             "GetGpt"]
-
 
 
 def ai_answer(text):
@@ -121,7 +125,6 @@ def ai_answer(text):
     elif provider_pref == "GetGpt":
         provider = g4f.Provider.GetGpt
 
-
     if text != "init":
         messages_array.append({"role": "user", "content": text})
     response = g4f.ChatCompletion.create(model='gpt-3.5-turbo',
@@ -139,8 +142,18 @@ def ai_answer(text):
             code = code_inside_tags
             with open("execute.py", "w", encoding='utf-8') as file:
                 file.write(code)
-            importlib.reload(execute)
-            result = execute.answer()
+
+            error_count = 0
+            while error_count <= 2:
+                try:
+                    importlib.reload(execute)
+                    result = execute.answer()
+                    break
+                except Exception as e:
+                    print("Error execute:", e)
+                    print(f"Попытка: {error_count} из 3")
+                    error_count += 1
+                    ai_answer("Ошибка выполнения кода: " + str(e) + "\nПопробуй ещё раз, исправив ошибку")
     print(messages_array)
 
     return result
