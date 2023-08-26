@@ -1,9 +1,9 @@
-import g4f
-import re
-import getpass
 import importlib
+import re
+
+import g4f
+
 import execute
-import traceback
 import prefs_manager
 
 show_pre = False
@@ -89,74 +89,81 @@ def get_providers():
 
 
 def ai_answer(text):
-    provider_pref = prefs_manager.get("provider")
-    if provider_pref is None:
-        prefs_manager.write("provider", get_providers()[0])
+    try:
         provider_pref = prefs_manager.get("provider")
-    provider = g4f.Provider.Forefront
-    if provider_pref == "Ails":
-        provider = g4f.Provider.Ails
-    elif provider_pref == "You":
-        provider = g4f.Provider.You
-    elif provider_pref == "Bing":
-        provider = g4f.Provider.Bing
-    elif provider_pref == "Yqcloud":
-        provider = g4f.Provider.Yqcloud
-    elif provider_pref == "Theb":
-        provider = g4f.Provider.Theb
-    elif provider_pref == "Aichat":
-        provider = g4f.Provider.Aichat
-    elif provider_pref == "Bard":
-        provider = g4f.Provider.Bard
-    elif provider_pref == "Vercel":
-        provider = g4f.Provider.Vercel
-    elif provider_pref == "Forefront":
+        if provider_pref is None:
+            prefs_manager.write("provider", get_providers()[0])
+            provider_pref = prefs_manager.get("provider")
         provider = g4f.Provider.Forefront
-    elif provider_pref == "Lockchat":
-        provider = g4f.Provider.Lockchat
-    elif provider_pref == "Liaobots":
-        provider = g4f.Provider.Liaobots
-    elif provider_pref == "H2o":
-        provider = g4f.Provider.H2o
-    elif provider_pref == "ChatgptLogin":
-        provider = g4f.Provider.ChatgptLogin
-    elif provider_pref == "DeepAi":
-        provider = g4f.Provider.DeepAi
-    elif provider_pref == "GetGpt":
-        provider = g4f.Provider.GetGpt
+        if provider_pref == "Ails":
+            provider = g4f.Provider.Ails
+        elif provider_pref == "You":
+            provider = g4f.Provider.You
+        elif provider_pref == "Bing":
+            provider = g4f.Provider.Bing
+        elif provider_pref == "Yqcloud":
+            provider = g4f.Provider.Yqcloud
+        elif provider_pref == "Theb":
+            provider = g4f.Provider.Theb
+        elif provider_pref == "Aichat":
+            provider = g4f.Provider.Aichat
+        elif provider_pref == "Bard":
+            provider = g4f.Provider.Bard
+        elif provider_pref == "Vercel":
+            provider = g4f.Provider.Vercel
+        elif provider_pref == "Forefront":
+            provider = g4f.Provider.Forefront
+        elif provider_pref == "Lockchat":
+            provider = g4f.Provider.Lockchat
+        elif provider_pref == "Liaobots":
+            provider = g4f.Provider.Liaobots
+        elif provider_pref == "H2o":
+            provider = g4f.Provider.H2o
+        elif provider_pref == "ChatgptLogin":
+            provider = g4f.Provider.ChatgptLogin
+        elif provider_pref == "DeepAi":
+            provider = g4f.Provider.DeepAi
+        elif provider_pref == "GetGpt":
+            provider = g4f.Provider.GetGpt
 
-    if text != "init":
-        messages_array.append({"role": "user", "content": text})
-    response = g4f.ChatCompletion.create(model='gpt-3.5-turbo',
-                                         messages=messages_array, stream=False, provider=provider)
-    result = ""
-    for part in response:
-        result += part
-    if show_pre:
-        print("pre-result:", result)
-    messages_array.append({"role": "assistant", "content": result})
-    if "<python>" in result and "</python>" in result:
-        match = re.search(pattern_code, result, re.DOTALL)
-        if match:
-            code_inside_tags = match.group(1)
-            code = code_inside_tags
-            with open("execute.py", "w", encoding='utf-8') as file:
-                file.write(code)
+        if text != "init":
+            messages_array.append({"role": "user", "content": text})
+        response = g4f.ChatCompletion.create(model='gpt-3.5-turbo',
+                                             messages=messages_array, stream=False, provider=provider)
+        result = ""
+        for part in response:
+            result += part
+        if show_pre:
+            print("pre-result:", result)
+        messages_array.append({"role": "assistant", "content": result})
+        if "<python>" in result and "</python>" in result:
+            match = re.search(pattern_code, result, re.DOTALL)
+            if match:
+                code_inside_tags = match.group(1)
+                code = code_inside_tags
+                with open("execute.py", "w", encoding='utf-8') as file:
+                    file.write(code)
 
-            error_count = 0
-            while error_count <= 2:
-                try:
-                    importlib.reload(execute)
-                    result = execute.answer()
-                    break
-                except Exception as e:
-                    print("Error execute:", e)
-                    print(f"Попытка: {error_count} из 3")
-                    error_count += 1
-                    ai_answer("Ошибка выполнения кода: " + str(e) + "\nПопробуй ещё раз, исправив ошибку")
-    print(messages_array)
+                error_count = 0
+                while error_count <= 2:
+                    try:
+                        importlib.reload(execute)
+                        result = execute.answer()
+                        break
+                    except Exception as e:
+                        print("Error execute:", e)
+                        print(f"Попытка: {error_count} из 3")
+                        error_count += 1
+                        ai_answer("Ошибка выполнения кода: " + str(e) + "\nПопробуй ещё раз, исправив ошибку")
+        print(messages_array)
 
-    return result
+        return result
+    except Exception as e:
+        return(f"Произошла ошибка:\n{e}")
+
+
+def test_providers():
+    print(g4f.Provider.Ails.params)
 
 
 def get_username():

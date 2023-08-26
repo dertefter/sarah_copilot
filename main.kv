@@ -5,6 +5,7 @@ WindowManager:
 <ChatScreen>:
     name: 'chat'
     MDBoxLayout:
+
         orientation: 'vertical'
         md_bg_color: app.theme_builder.get_color('surface')
         MDTopAppBar:
@@ -45,6 +46,8 @@ WindowManager:
                 adaptive_height: True
                 spacing: '10dp'
                 padding: '10dp'
+
+
                 Image:
                     color: app.theme_builder.get_color('primary')
                     id: typing_animation
@@ -55,7 +58,6 @@ WindowManager:
                     source: "assets/images/typing.gif"
                     anim_loop: 0
                     anim_delay: 0.001
-
         MDBoxLayout:
             md_bg_color: app.theme_builder.get_color('surfaceContainer')
             padding: 10
@@ -106,18 +108,19 @@ WindowManager:
                     orientation: "horizontal"
                     adaptive_height: True
                     spacing: '10dp'
-                    padding: '12dp'
-                    radius: [self.height/2, self.height/2, self.height/2, self.height/2]
+                    padding: ["8dp", "8dp"]
+                    radius: ["8dp", "8dp", "8dp", "8dp"]
 
                     MDLabel:
                         text: "Провайдер"
                         theme_text_color: "Custom"
                         text_color: app.theme_builder.get_color('onSurfaceVariant')
                         font_style: "Body1"
-                    MDFillRoundFlatButton:
+                    MDRaisedButton:
                         id: provider_button
-                        padding: '10dp'
+                        pos_hint: {'center_x': .5, 'center_y': .5}
                         text: "MDRaisedButton"
+
                         md_bg_color: app.theme_builder.get_color('primaryContainer')
                         theme_text_color: "Custom"
                         text_color: app.theme_builder.get_color('onPrimaryContainer')
@@ -127,8 +130,8 @@ WindowManager:
                     md_bg_color: app.theme_builder.get_color('surfaceContainerLow')
                     orientation: "horizontal"
                     adaptive_height: True
-                    padding: [self.height/4, 0]
-                    radius: [self.height/2, self.height/2, self.height/2, self.height/2]
+                    padding: ["8dp", "0dp"]
+                    radius: ["8dp", "8dp", "8dp", "8dp"]
 
                     MDLabel:
                         text: "Озвучивать результат"
@@ -148,11 +151,11 @@ WindowManager:
                     md_bg_color: app.theme_builder.get_color('surfaceContainerLow')
                     orientation: "horizontal"
                     adaptive_height: True
-
-                    padding: [self.height/4, 0]
-                    radius: [self.height/2, self.height/2, self.height/2, self.height/2]
+                    padding: ["8dp", "0dp"]
+                    radius: ["8dp", "8dp", "8dp", "8dp"]
 
                     MDLabel:
+
                         text: "Распознавание речи после фразы активации"
                         theme_text_color: "Custom"
                         text_color: app.theme_builder.get_color('onSurfaceVariant')
@@ -171,9 +174,8 @@ WindowManager:
                     md_bg_color: app.theme_builder.get_color('surfaceContainerLow')
                     orientation: "horizontal"
                     adaptive_height: True
-
-                    padding: [self.height/4, 0]
-                    radius: [self.height/2, self.height/2, self.height/2, self.height/2]
+                    padding: ["8dp", "0dp"]
+                    radius: ["8dp", "8dp", "8dp", "8dp"]
 
                     MDTextField:
                         id: path_to_vosk_model

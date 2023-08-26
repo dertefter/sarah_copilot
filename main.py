@@ -1,27 +1,25 @@
-import os
-os.environ["KIVY_NO_CONSOLELOG"] = "1"
+#os.environ["KIVY_NO_CONSOLELOG"] = "1"
 
 from kivy.config import Config
 
+Config.set('kivy', 'window_icon', 'assets/other/icon.png')
 Config.set('graphics', 'resizable', False)
 Config.set("graphics", "width", 560)
 Config.set("graphics", "height", 900)
 Config.set("graphics", "borderless", '1')
 Config.set("graphics", "always_on_top", '1')
 Config.write()
-from kivy.core.audio import SoundLoader
 from kivy.core.window import Window
-from kivy.metrics import dp
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.screen import MDScreen
-from kivymd.uix.snackbar import Snackbar, MDSnackbar
+from kivymd.uix.snackbar import MDSnackbar
 from ctypes import windll, c_int64
 from win32api import GetMonitorInfo, MonitorFromPoint
+
 windll.user32.SetProcessDpiAwarenessContext(c_int64(-4))
 from threading import Thread
 from kivy.clock import mainthread
-from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivymd.uix.label import MDLabel
 from kivymd.uix.card import MDCard
@@ -49,7 +47,6 @@ class MainApp(MDApp):
     theme_style = theme_builder.get_theme_style()
     print(theme_builder.get_color('surface'))
 
-
     icon = 'assets/other/icon.png'
     title = 'Sarah - Copilot for Windows'
     monitor_info = GetMonitorInfo(MonitorFromPoint((0, 0)))
@@ -65,15 +62,14 @@ class MainApp(MDApp):
     def un_minimize(self):
         Window.restore()
 
-
-    def stt_service(self, value):
+    def stt_service(self, value, app):
         if not self.speech_service_started:
             if value:
                 self.root.get_screen('chat').ids.listen_notification.opacity = 1
                 self.speech_service_started = True
                 self.stt_thread = Thread(target=stt.hotword_detection,
                                          args=[stt.q_callback, self.root.get_screen('chat').ids.field,
-                                               self.root.get_screen('chat').ids.send])
+                                               self.root.get_screen('chat').ids.send, app])
                 self.stt_thread.daemon = True
                 self.stt_thread.start()
 
@@ -82,18 +78,16 @@ class MainApp(MDApp):
             if not value:
                 self.speech_service_started = False
 
-
-
     def on_start(self):
         self.init_prefs()
         self.get_ai_response('init')
+
     def build(self):
-        self.theme_cls.primary_palette = "DeepPurple"
-        self.theme_cls.primary_hue = "200"
+
         self.theme_cls.material_style = "M3"
         self.theme_cls.theme_style = self.theme_style
 
-        return Builder.load_file('main.kv')
+        return self.root
 
     def clear_history(self):
         for i in range(1, len(self.root.get_screen('chat').ids.chat.children)):
@@ -101,6 +95,7 @@ class MainApp(MDApp):
         t = Thread(target=mind.new_chat, args=[self])
         t.daemon = True
         t.start()
+
     def init_prefs(self):
         if (prefs_manager.get('provider') == None):
             prefs_manager.write('provider', mind.get_providers()[0])
@@ -127,11 +122,11 @@ class MainApp(MDApp):
         if prefs_manager.get('voice_recognition') == True:
             self.root.get_screen('settings').ids.voice_recognition.active = True
             self.root.get_screen('chat').ids.listen_notification.opacity = 1
-            self.stt_service(True)
+            self.stt_service(True, self)
         else:
             self.root.get_screen('settings').ids.voice_recognition.active = False
             self.root.get_screen('chat').ids.listen_notification.opacity = 0
-            self.stt_service(False)
+            self.stt_service(False, self)
 
         if prefs_manager.get('voice_synthesis') == True:
             self.root.get_screen('settings').ids.voice_synthesis.active = True
@@ -147,7 +142,8 @@ class MainApp(MDApp):
 
         error = False
         self.root.get_screen('chat').ids.field.text = ""
-        item = MDCard(orientation='vertical', padding='14dp', spacing='10dp', adaptive_height=True)
+        item = MDCard(orientation='vertical', padding='14dp', spacing='10dp', adaptive_height=True,
+                      radius=["8dp", "8dp", "8dp", "8dp"])
         sender_label = MDLabel(text=sender, theme_text_color='Custom', adaptive_height=True, font_style="Caption")
         message_label = MDLabel(text=text, theme_text_color='Custom', adaptive_height=True, font_style="Body1")
         item.height = message_label.height + sender_label.height
@@ -238,6 +234,7 @@ class MainApp(MDApp):
             self.root.get_screen('chat').ids.listen_notification.opacity = 0
         else:
             self.root.get_screen('chat').ids.listen_notification.opacity = 1
+
     def set_provider_menu(self):
         menu_items = [
             {
@@ -281,9 +278,14 @@ class MainApp(MDApp):
                 self.stt_service(False)
                 snack = MDSnackbar()
                 snack.duration = 3
-                snack.md_bg_color="#93000a"
-                snack.add_widget(MDLabel(text="Ошибка инициализации модели...", halign="left", theme_text_color="Custom", text_color="#ffdad6"))
+                snack.md_bg_color = "#93000a"
+                snack.add_widget(
+                    MDLabel(text="Ошибка инициализации модели...", halign="left", theme_text_color="Custom",
+                            text_color="#ffdad6"))
 
                 snack.open()
+
+
 if __name__ == '__main__':
     MainApp().run()
+

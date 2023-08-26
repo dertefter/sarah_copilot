@@ -1,6 +1,7 @@
 import threading
 import time
-from playsound import playsound
+import wave
+import pyaudio
 import vosk
 import sys
 import sounddevice as sd
@@ -33,7 +34,7 @@ def check_model(path):
     except:
         return False
 
-def hotword_detection(callback, textfield, button):
+def hotword_detection(callback, textfield, button, app):
     try:
         is_record = False
         model_path = prefs_manager.get("path_to_vosk_model")
@@ -53,15 +54,15 @@ def hotword_detection(callback, textfield, button):
                     get = json.loads(rec.Result())["text"]
                     print(get)
                     if not is_record:
-                        if len(get) >= 4 and ((get[0] == "с" or get [0] == "ш") and get[2] == "р"):
+                        if (len(get) >= 4 and ((get[0] == "с" or get [0] == "ш") and get[2] == "р")) or ("sarah" in get):
                             print("hotword detected")
                             is_record = True
-                            listen_animation(True, textfield, button)
+                            listen_animation(True, textfield, button, app)
                     else:
                         time.sleep(1.2)
                         stt_result_to_ui(get, textfield, button)
                         is_record = False
-                        listen_animation(False, textfield, button)
+                        listen_animation(False, textfield, button, app)
     except Exception:
         print(traceback.format_exc())
         print("Ошибка запуска распознавания речи")
@@ -76,22 +77,49 @@ def stt_result_to_ui(text, textfield, button):
     button.trigger_action(0)
 
 @mainthread
-def listen_animation(v, field, button):
+def listen_animation(v, field, button, app):
     if v:
         field.text = "Слушаю..."
         button.icon = "microphone"
         button.disabled = True
-        field.parent.md_bg_color = "#4a4458"
+        field.parent.md_bg_color = app.theme_builder.get_color('primary')
         notify('listen')
     else:
         button.icon = "send"
         button.disabled = False
-        field.parent.md_bg_color = "#272429"
+        field.parent.md_bg_color = app.theme_builder.get_color('surfaceContainer')
 
+def play_wav_file(file_path):
+    chunk = 1024
+
+    # Open the WAV file
+    wf = wave.open(file_path, 'rb')
+
+    # Initialize PyAudio
+    p = pyaudio.PyAudio()
+
+    # Open a stream to play the WAV file
+    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                    channels=wf.getnchannels(),
+                    rate=wf.getframerate(),
+                    output=True)
+
+    # Read data in chunks and play them in the stream
+    data = wf.readframes(chunk)
+    while data:
+        stream.write(data)
+        data = wf.readframes(chunk)
+
+    # Close the stream and terminate PyAudio
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
 def notify(arg):
     sound = 'assets/audio/listen.wav'
     if arg == 'listen':
         sound = 'assets/audio/listen.wav'
     elif arg == 'cancel':
         sound = 'assets/audio/cancel.wav'
-    threading.Thread(target=playsound, args=(sound,)).start()
+    t = threading.Thread(target=play_wav_file, args=[sound])
+    t.daemon = True
+    t.start()
